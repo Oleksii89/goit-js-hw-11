@@ -12,7 +12,7 @@ const refs = {
 let query = '';
 let page = 1;
 let simpleLightBox;
-const perPage = 200;
+const perPage = 40;
 
 refs.searchForm.addEventListener('submit', onSearchForm);
 
