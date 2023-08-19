@@ -62,7 +62,7 @@ p {
   background-color: rgba(224, 224, 224, 0.5);
 }
 
-.load-more.is-hidden {
+.load-more-hidden {
   display: none;
 }
 
