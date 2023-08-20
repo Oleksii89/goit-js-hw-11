@@ -57,24 +57,27 @@ function onSearchForm(evt) {
 
 function onLoadMore() {
   page += 1;
+  simpleLightBox.destroy();
+
   refs.loadMore.disabled = true;
 
-  fetchImages(query, page, perPage).then(response => {
-    refs.gallery.insertAdjacentHTML('beforeend', createMarkup(response.hits));
-    simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+  fetchImages(query, page, perPage)
+    .then(response => {
+      refs.gallery.insertAdjacentHTML('beforeend', createMarkup(response.hits));
+      simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+      const totalPages = Math.ceil(response.totalHits / perPage);
 
-    const totalPages = Math.ceil(response.totalHits / perPage);
-
-    if (page < totalPages) {
-      refs.loadMore.classList.replace('load-more-hidden', 'load-more');
-      refs.loadMore.disabled = false;
-    } else {
-      Notiflix.Notify.failure(
-        "We're sorry, but you've reached the end of search results."
-      );
-      refs.loadMore.classList.replace('load-more', 'load-more-hidden');
-    }
-  });
+      if (page < totalPages) {
+        refs.loadMore.classList.replace('load-more-hidden', 'load-more');
+        refs.loadMore.disabled = false;
+      } else {
+        Notiflix.Notify.failure(
+          "We're sorry, but you've reached the end of search results."
+        );
+        refs.loadMore.classList.replace('load-more', 'load-more-hidden');
+      }
+    })
+    .catch(onFetchError);
 }
 
 function createMarkup(arr) {
