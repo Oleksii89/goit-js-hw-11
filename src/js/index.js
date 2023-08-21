@@ -32,6 +32,13 @@ function onSearchForm(evt) {
   }
   fetchImages(query, page, perPage)
     .then(response => {
+      if (response.hits.length < perPage) {
+        refs.loadMore.classList.replace('load-more', 'load-more-hidden');
+        refs.loadMore.disabled = true;
+      } else {
+        refs.loadMore.classList.replace('load-more-hidden', 'load-more');
+        refs.loadMore.disabled = false;
+      }
       if (response.totalHits === 0) {
         Notiflix.Notify.failure(
           'Sorry, there are no images matching your search query. Please try again.'
@@ -41,12 +48,15 @@ function onSearchForm(evt) {
           'beforeend',
           createMarkup(response.hits)
         );
-        simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+        simpleLightBox = new SimpleLightbox('.gallery a', {
+          captions: true,
+          captionsData: 'alt',
+          captionPosition: 'bottom',
+          captionDelay: 250,
+        }).refresh();
         Notiflix.Notify.success(
           `Hooray! We found ${response.totalHits} images.`
         );
-        refs.loadMore.classList.replace('load-more-hidden', 'load-more');
-        refs.loadMore.disabled = false;
       }
     })
     .catch(onFetchError)
@@ -64,7 +74,12 @@ function onLoadMore() {
   fetchImages(query, page, perPage)
     .then(response => {
       refs.gallery.insertAdjacentHTML('beforeend', createMarkup(response.hits));
-      simpleLightBox = new SimpleLightbox('.gallery a').refresh();
+      simpleLightBox = new SimpleLightbox('.gallery a', {
+        captions: true,
+        captionsData: 'alt',
+        captionPosition: 'bottom',
+        captionDelay: 250,
+      }).refresh();
       const totalPages = Math.ceil(response.totalHits / perPage);
 
       if (page < totalPages) {
